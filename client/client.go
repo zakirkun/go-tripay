@@ -19,7 +19,7 @@ func (c Client) HeaderRequest() []map[string]string {
 }
 
 func (c Client) BaseUrl() string {
-	if c.Mode == utils.URL_DEVELOPMENT {
+	if c.Mode == utils.MODE_DEVELOPMENT {
 		return string(utils.URL_DEVELOPMENT)
 	}
 

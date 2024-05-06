@@ -13,7 +13,7 @@ func TestMerchantPay(t *testing.T) {
 		MerchantCode: "T14302",
 		ApiKey:       "DEV-ZKIDl5gE3AsCDThj7mWX6yvQ8f42NZWJWlZ7TSzS",
 		PrivateKey:   "J2WTm-93avv-w0PZV-ur1t4-4TCjd",
-		Mode:         utils.URL_DEVELOPMENT,
+		Mode:         utils.MODE_DEVELOPMENT,
 	}
 
 	reponseOk, responseBad := client.MerchantPay()
@@ -29,7 +29,7 @@ func TestMerchantPayWithCtx(t *testing.T) {
 		MerchantCode: "T14302",
 		ApiKey:       "DEV-ZKIDl5gE3AsCDThj7mWX6yvQ8f42NZWJWlZ7TSzS",
 		PrivateKey:   "J2WTm-93avv-w0PZV-ur1t4-4TCjd",
-		Mode:         utils.URL_DEVELOPMENT,
+		Mode:         utils.MODE_DEVELOPMENT,
 	}
 
 	ctx, timeout := context.WithTimeout(context.Background(), 5*time.Second)
