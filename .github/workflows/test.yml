@@ -1,4 +1,4 @@
-name: COI action
+name: run unit test
 
 on: push
 
