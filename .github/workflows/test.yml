@@ -1,0 +1,15 @@
+name: COI action
+
+on: push
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v4
+        - name: setup go
+          uses: actions/setup-go@v4
+          with:
+            go-version: '1.22.x'
+        - name: run unit test
+          run: go test -v -run=. github.com/zakirkun/go-tripay/client
