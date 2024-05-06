@@ -6,7 +6,7 @@ type Client struct {
 	MerchantCode string
 	ApiKey       string
 	PrivateKey   string
-	Mode         string
+	Mode         utils.TRIPAY_MODE
 }
 
 func (c Client) HeaderRequest() []map[string]string {
@@ -20,8 +20,8 @@ func (c Client) HeaderRequest() []map[string]string {
 
 func (c Client) BaseUrl() string {
 	if c.Mode == utils.MODE_DEVELOPMENT {
-		return utils.URL_DEVELOPMENT
+		return string(utils.URL_DEVELOPMENT)
 	}
 
-	return utils.URL_PRODUCTION
+	return string(utils.URL_PRODUCTION)
 }

@@ -1,7 +1,10 @@
 package utils
 
-const URL_DEVELOPMENT string = "https://tripay.co.id/api-sandbox/"
-const URL_PRODUCTION string = "https://tripay.co.id/api/"
+type TRIPAY_URL string
+type TRIPAY_MODE string
 
-const MODE_DEVELOPMENT string = "development"
-const MODE_PRODUCTION string = "production"
+const URL_DEVELOPMENT TRIPAY_URL = "https://tripay.co.id/api-sandbox/"
+const URL_PRODUCTION TRIPAY_URL = "https://tripay.co.id/api/"
+
+const MODE_DEVELOPMENT TRIPAY_MODE = "development"
+const MODE_PRODUCTION TRIPAY_MODE = "production"
