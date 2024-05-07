@@ -5,14 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strings"
 
 	"github.com/zakirkun/go-tripay/internal/requester"
 	"github.com/zakirkun/go-tripay/utils"
 )
 
 type (
-	FeeCalcSuccessResponse struct {
+	FeeCalcResponse struct {
 		Success bool   `json:"success"`
 		Message string `json:"message"`
 		Data    []struct {
@@ -31,26 +30,21 @@ type (
 		} `json:"data"`
 	}
 
-	FeeCalcFailResponse struct {
-		Success bool   `json:"success"`
-		Message string `json:"message"`
-	}
-
 	FeeCalcParam struct {
 		Amount int
 		Code   utils.TRIPAY_CHANNEL
 	}
 )
 
-func (c Client) FeeCalc(p FeeCalcParam) (*FeeCalcSuccessResponse, error) {
+func (c Client) FeeCalc(p FeeCalcParam) (*FeeCalcResponse, error) {
 	return feeCalc(c, p, nil)
 }
 
-func (c Client) FeeCalcWithContext(ctx context.Context, p FeeCalcParam) (*FeeCalcSuccessResponse, error) {
+func (c Client) FeeCalcWithContext(ctx context.Context, p FeeCalcParam) (*FeeCalcResponse, error) {
 	return feeCalc(c, p, ctx)
 }
 
-func feeCalc(c Client, p FeeCalcParam, ctx context.Context) (*FeeCalcSuccessResponse, error) {
+func feeCalc(c Client, p FeeCalcParam, ctx context.Context) (*FeeCalcResponse, error) {
 	param := url.Values{}
 	param.Set("code", string(p.Code))
 	param.Set("amount", fmt.Sprintf("%d", p.Amount))
@@ -72,13 +66,11 @@ func feeCalc(c Client, p FeeCalcParam, ctx context.Context) (*FeeCalcSuccessResp
 		bodyReq, errReq = req.DO()
 	}
 
-	if errReq != nil || strings.Contains(string(paramReq.Body), "false") {
-		var failResponse FeeCalcFailResponse
-		json.Unmarshal(bodyReq.ResponseBody, &failResponse)
+	if errReq != nil {
 		return nil, errReq
 	}
 
-	var successResponse FeeCalcSuccessResponse
+	var successResponse FeeCalcResponse
 	json.Unmarshal(bodyReq.ResponseBody, &successResponse)
 	return &successResponse, nil
 }

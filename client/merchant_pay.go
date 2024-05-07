@@ -7,7 +7,7 @@ import (
 	"github.com/zakirkun/go-tripay/internal/requester"
 )
 
-type MerchantResponseOK struct {
+type MerchantResponse struct {
 	Success bool   `json:"success"`
 	Message string `json:"message"`
 	Data    []struct {
@@ -34,20 +34,15 @@ type MerchantResponseOK struct {
 	} `json:"data"`
 }
 
-type MerchantResponseFail struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-}
-
-func (c Client) MerchantPay() (*MerchantResponseOK, *MerchantResponseFail) {
+func (c Client) MerchantPay() (*MerchantResponse, error) {
 	return merchantPay(c, nil)
 }
 
-func (c Client) MerchantPayWithContext(ctx context.Context) (*MerchantResponseOK, *MerchantResponseFail) {
+func (c Client) MerchantPayWithContext(ctx context.Context) (*MerchantResponse, error) {
 	return merchantPay(c, ctx)
 }
 
-func merchantPay(c Client, ctx context.Context) (*MerchantResponseOK, *MerchantResponseFail) {
+func merchantPay(c Client, ctx context.Context) (*MerchantResponse, error) {
 	paramReq := requester.IRequesterParams{
 		Url:    c.BaseUrl() + "merchant/payment-channel",
 		Method: "GET",
@@ -65,12 +60,10 @@ func merchantPay(c Client, ctx context.Context) (*MerchantResponseOK, *MerchantR
 	}
 
 	if errReq != nil {
-		var failResponse MerchantResponseFail
-		_ = json.Unmarshal(bodyReq.ResponseBody, &failResponse)
-		return nil, &failResponse
+		return nil, errReq
 	}
 
-	var successResponse MerchantResponseOK
+	var successResponse MerchantResponse
 	json.Unmarshal(bodyReq.ResponseBody, &successResponse)
 	return &successResponse, nil
 }
