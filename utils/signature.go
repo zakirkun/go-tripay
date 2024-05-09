@@ -22,7 +22,7 @@ type Signature struct {
 func (s *Signature) CreateSignature() string {
 	var signStr string
 	if s.Amount != 0 {
-		signStr = s.MerchantCode + s.MerchanReff + fmt.Sprint(s.Amount)
+		signStr = s.MerchantCode + s.MerchanReff + fmt.Sprintf("%d", s.Amount)
 	} else {
 		signStr = s.MerchantCode + s.Channel + s.MerchanReff
 	}
