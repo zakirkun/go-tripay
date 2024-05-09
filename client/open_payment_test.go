@@ -16,14 +16,15 @@ func TestOpenPaymentSuccess(t *testing.T) {
 
 	client.SetSignature(utils.Signature{
 		MerchantCode: "T14302",
-		Channel:      "BRIVA",
-		MerchanReff:  "INV345678",
+		Channel:      "BCAVA",
+		MerchanReff:  "INV345675",
 	})
 
 	payment := OpenPaymentRequest{
-		Method:       "BRIVA",
-		MerchatReff:  "INV345678",
-		CustomerName: "Fulan",
+		Method:       "BCAVA",
+		MerchatReff:  "INV345675",
+		CustomerName: "Fulan Fulan",
+		Signature:    client.GetSignature(),
 	}
 
 	responseOk, responseBad := client.OpenPaymentTransaction(payment)
