@@ -6,6 +6,7 @@ type Client struct {
 	MerchantCode string
 	ApiKey       string
 	PrivateKey   string
+	Signature    string
 	Mode         utils.TRIPAY_MODE
 }
 
@@ -24,4 +25,12 @@ func (c Client) BaseUrl() string {
 	}
 
 	return string(utils.URL_PRODUCTION)
+}
+
+func (c *Client) SetSignature(s utils.Signature) {
+	c.Signature = s.CreateSignature()
+}
+
+func (c Client) GetSignature() string {
+	return c.Signature
 }
