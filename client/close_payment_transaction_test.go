@@ -37,7 +37,7 @@ func TestClosePaymentTransactionRequestSuccess(t *testing.T) {
 				SKU:        "Produk1",
 				Name:       "nama produk 1",
 				Price:      50000,
-				Quantity:   10,
+				Quantity:   1,
 				ProductURL: "https://producturl.com",
 				ImageURL:   "https://imageurl.com",
 			},
