@@ -7,7 +7,7 @@ import (
 	"github.com/zakirkun/go-tripay/utils"
 )
 
-func TestClosePaymentTransactionRequestSuccess(t *testing.T) {
+func TestClosePaymentTransactionRequest(t *testing.T) {
 	client := Client{
 		MerchantCode: "T14302",
 		ApiKey:       "DEV-ZKIDl5gE3AsCDThj7mWX6yvQ8f42NZWJWlZ7TSzS",
@@ -15,12 +15,12 @@ func TestClosePaymentTransactionRequestSuccess(t *testing.T) {
 		Mode:         utils.MODE_DEVELOPMENT,
 	}
 
-	s := utils.Signature{
-		Amount:       10,
+	client.SetSignature(utils.Signature{
+		Amount:       50000,
 		PrivateKey:   "J2WTm-93avv-w0PZV-ur1t4-4TCjd",
-		MerchantCode: "T0001",
+		MerchantCode: "T14302",
 		MerchanReff:  "INV345675",
-	}
+	})
 
 	bodyReq := ClosePaymentBodyRequest{
 		Method:        utils.CHANNEL_BCAVA,
@@ -31,7 +31,7 @@ func TestClosePaymentTransactionRequestSuccess(t *testing.T) {
 		CustomerPhone: "62891829828",
 		ReturnURL:     "https://thisisreturnurl.com/redirect",
 		ExpiredTime:   SetTripayExpiredTime(24), // 24 Hour
-		Signature:     s.CreateSignature(),
+		Signature:     client.GetSignature(),
 		OrderItems: []OrderItemClosePaymentRequest{
 			{
 				SKU:        "Produk1",
@@ -43,10 +43,28 @@ func TestClosePaymentTransactionRequestSuccess(t *testing.T) {
 			},
 		},
 	}
-	reponseOk, responseBad := client.ClosePaymentRequestTransaction(context.Background(), bodyReq)
-	if responseBad != nil {
-		t.Errorf("ERROR: %v", responseBad)
+	response, err := client.ClosePaymentRequestTransaction(context.Background(), bodyReq)
+	if err != nil {
+		t.Errorf("ERROR: %v", err)
 	}
 
-	t.Log("Success: ", reponseOk)
+	t.Log("Success: ", response)
+}
+
+func TestClosePaymentTransactionGetTransaction(t *testing.T) {
+	referenceId := "DEV-T14302154794FZ2ZT"
+
+	client := Client{
+		MerchantCode: "T14302",
+		ApiKey:       "DEV-ZKIDl5gE3AsCDThj7mWX6yvQ8f42NZWJWlZ7TSzS",
+		PrivateKey:   "J2WTm-93avv-w0PZV-ur1t4-4TCjd",
+		Mode:         utils.MODE_DEVELOPMENT,
+	}
+
+	response, err := client.ClosePaymentTransactionGetDetail(referenceId)
+	if err != nil {
+		t.Errorf("ERROR: %v", err)
+	}
+
+	t.Log("Success: ", response)
 }
