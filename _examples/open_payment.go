@@ -1,13 +1,15 @@
-package client
+package examples
 
 import (
-	"testing"
-
+	"github.com/zakirkun/go-tripay/client"
 	"github.com/zakirkun/go-tripay/utils"
+
+	"fmt"
 )
 
-func TestOpenPaymentSuccess(t *testing.T) {
-	client := Client{
+func Example_open_payment_create() {
+
+	client := client.Client{
 		MerchantCode: "T14302",
 		ApiKey:       "DEV-ZKIDl5gE3AsCDThj7mWX6yvQ8f42NZWJWlZ7TSzS",
 		PrivateKey:   "J2WTm-93avv-w0PZV-ur1t4-4TCjd",
@@ -20,7 +22,7 @@ func TestOpenPaymentSuccess(t *testing.T) {
 		MerchanReff:  "INV345675",
 	})
 
-	payment := OpenPaymentRequest{
+	payment := client.OpenPaymentRequest{
 		Method:       "BCAVA",
 		MerchatReff:  "INV345675",
 		CustomerName: "Fulan Fulan",
@@ -29,8 +31,8 @@ func TestOpenPaymentSuccess(t *testing.T) {
 
 	responseOk, responseBad := client.OpenPaymentTransaction(payment)
 	if responseBad != nil {
-		t.Errorf("ERROR: %v", responseBad)
+		fmt.Errorf("ERROR: %v", responseBad)
 	}
 
-	t.Log("Success: ", responseOk)
+	fmt.Printf("Success: ", responseOk)
 }
