@@ -16,36 +16,6 @@ type OpenPaymentRequest struct {
 	Signature    string `json:"signature"`
 }
 
-type OpenPaymentResponse struct {
-	Success         bool   `json:"success"`
-	Message         string `json:"message"`
-	OpenPaymentData struct {
-		UUID          string `json:"uuid"`
-		MerchantRef   string `json:"merchant_ref"`
-		CustomerName  string `json:"customer_name"`
-		PaymentName   string `json:"payment_name"`
-		PaymentMethod string `json:"payment_method"`
-		PayCode       string `json:"pay_code"`
-		QRString      string `json:"qr_string"`
-		QRURL         string `json:"qr_url"`
-	} `json:"data"`
-}
-
-type OpenPaymentDetailResponse struct {
-	Success               bool   `json:"success"`
-	Message               string `json:"message"`
-	OpenPaymentDetailData struct {
-		UUID          string `json:"uuid"`
-		MerchantRef   string `json:"merchant_ref"`
-		CustomerName  string `json:"customer_name"`
-		PaymentName   string `json:"payment_name"`
-		PaymentMethod string `json:"payment_method"`
-		PayCode       string `json:"pay_code"`
-		QRString      string `json:"qr_string,omitempty"`
-		QRURL         string `json:"qr_url,omitempty"`
-	} `json:"data"`
-}
-
 type OpenPaymentListParams struct {
 	Page        int
 	PerPage     int
@@ -56,82 +26,53 @@ type OpenPaymentListParams struct {
 	Status      string
 }
 
-type OpenPaymentListResponse struct {
-	Success                bool   `json:"success"`
-	Message                string `json:"message"`
-	OpenPaymentTransaction []struct {
-		Reference      string `json:"reference"`
-		MerchantRef    string `json:"merchant_ref"`
-		PaymentMethod  string `json:"payment_method"`
-		PaymentName    string `json:"payment_name"`
-		CustomerName   string `json:"customer_name"`
-		Amount         int    `json:"amount"`
-		FeeMerchant    int    `json:"fee_merchant"`
-		FeeCustomer    int    `json:"fee_customer"`
-		TotalFee       int    `json:"total_fee"`
-		AmountReceived int    `json:"amount_received"`
-		CheckoutURL    string `json:"checkout_url"`
-		Status         string `json:"status"`
-		PaidAt         int64  `json:"paid_at"`
-	} `json:"data"`
-	Pagination struct {
-		Total       int  `json:"total"`
-		DataFrom    int  `json:"data_from"`
-		DataTo      int  `json:"data_to"`
-		PerPage     int  `json:"per_page"`
-		CurrentPage int  `json:"current_page"`
-		LastPage    int  `json:"last_page"`
-		NextPage    *int `json:"next_page"`
-	} `json:"pagination"`
-}
-
 /*
 is used to retrieve the list of payments entered in the open payment. this method only work in production!
 */
-func (c Client) OpenPaymentDetail(uuid string) (*OpenPaymentDetailResponse, error) {
+func (c Client) OpenPaymentDetail(uuid string) (tripayResponses[openPaymentDetailResponse], error) {
 	return openPaymentDetail(c, uuid, nil)
 }
 
 /*
 is used to retrieve the list of payments entered in the open payment. this method only work in production!
 */
-func (c Client) OpenPaymentDetailWithContext(uuid string, ctx context.Context) (*OpenPaymentDetailResponse, error) {
+func (c Client) OpenPaymentDetailWithContext(uuid string, ctx context.Context) (tripayResponses[openPaymentDetailResponse], error) {
 	return openPaymentDetail(c, uuid, ctx)
 }
 
 /*
 Used to create a new transaction or generate a payment code for Open Payment type. this method only work in production!
 */
-func (c Client) OpenPaymentTransaction(p OpenPaymentRequest) (*OpenPaymentResponse, error) {
+func (c Client) OpenPaymentTransaction(p OpenPaymentRequest) (tripayResponses[openPaymentDataResponse], error) {
 	return openPayment(c, p, nil)
 }
 
 /*
 Used to create a new transaction or generate a payment code for Open Payment type. this method only work in production!
 */
-func (c Client) OpenPaymentTransactionWithContext(p OpenPaymentRequest, ctx context.Context) (*OpenPaymentResponse, error) {
+func (c Client) OpenPaymentTransactionWithContext(p OpenPaymentRequest, ctx context.Context) (tripayResponses[openPaymentDataResponse], error) {
 	return openPayment(c, p, ctx)
 }
 
 /*
 used to retrieve details of open payment transactions that have been made. this method only work in production!
 */
-func (c Client) OpenPaymentList(uuid string, p ...OpenPaymentListParams) (*OpenPaymentListResponse, error) {
+func (c Client) OpenPaymentList(uuid string, p ...OpenPaymentListParams) (*openPaymentListResponse, error) {
 	return openPaymentList(c, uuid, nil, p...)
 }
 
 /*
 used to retrieve details of open payment transactions that have been made. this method only work in production!
 */
-func (c Client) OpenPaymentListWithContext(uuid string, ctx context.Context, p ...OpenPaymentListParams) (*OpenPaymentListResponse, error) {
+func (c Client) OpenPaymentListWithContext(uuid string, ctx context.Context, p ...OpenPaymentListParams) (*openPaymentListResponse, error) {
 	return openPaymentList(c, uuid, ctx, p...)
 }
 
-func openPayment(c Client, p OpenPaymentRequest, ctx context.Context) (*OpenPaymentResponse, error) {
+func openPayment(c Client, p OpenPaymentRequest, ctx context.Context) (tripayResponses[openPaymentDataResponse], error) {
 
 	payloadBody, err := json.Marshal(&p)
 	if err != nil {
-		return nil, err
+		return tripayResponses[openPaymentDataResponse]{}, err
 	}
 
 	paramReq := requester.IRequesterParams{
@@ -151,15 +92,15 @@ func openPayment(c Client, p OpenPaymentRequest, ctx context.Context) (*OpenPaym
 	}
 
 	if errReq != nil {
-		return nil, errReq
+		return tripayResponses[openPaymentDataResponse]{}, errReq
 	}
 
-	var successResponse OpenPaymentResponse
+	var successResponse tripayResponses[openPaymentDataResponse]
 	json.Unmarshal(bodyReq.ResponseBody, &successResponse)
-	return &successResponse, nil
+	return successResponse, nil
 }
 
-func openPaymentDetail(c Client, uuid string, ctx context.Context) (*OpenPaymentDetailResponse, error) {
+func openPaymentDetail(c Client, uuid string, ctx context.Context) (tripayResponses[openPaymentDetailResponse], error) {
 
 	paramReq := requester.IRequesterParams{
 		Url:    c.BaseUrl() + "open-payment/" + uuid + "/detail",
@@ -178,15 +119,15 @@ func openPaymentDetail(c Client, uuid string, ctx context.Context) (*OpenPayment
 	}
 
 	if errReq != nil {
-		return nil, errReq
+		return tripayResponses[openPaymentDetailResponse]{}, errReq
 	}
 
-	var successResponse OpenPaymentDetailResponse
+	var successResponse tripayResponses[openPaymentDetailResponse]
 	json.Unmarshal(bodyReq.ResponseBody, &successResponse)
-	return &successResponse, nil
+	return successResponse, nil
 }
 
-func openPaymentList(c Client, uuid string, ctx context.Context, p ...OpenPaymentListParams) (*OpenPaymentListResponse, error) {
+func openPaymentList(c Client, uuid string, ctx context.Context, p ...OpenPaymentListParams) (*openPaymentListResponse, error) {
 
 	var paymentParams OpenPaymentListParams
 	for _, m := range p {
@@ -222,7 +163,7 @@ func openPaymentList(c Client, uuid string, ctx context.Context, p ...OpenPaymen
 		return nil, errReq
 	}
 
-	var response OpenPaymentListResponse
+	var response openPaymentListResponse
 	json.Unmarshal(bodyReq.ResponseBody, &response)
 	return &response, nil
 
