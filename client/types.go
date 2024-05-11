@@ -2,7 +2,7 @@ package client
 
 type (
 	tripayDataResponse interface {
-		closePaymentTransactionOrderResponse | []feeCalcResponse | []merchantResponse | []instructionResponse
+		closePaymentTransactionOrderResponse | []feeCalcResponse | []merchantResponse | []instructionResponse | openPaymentDetailResponse | openPaymentDataResponse
 	}
 
 	tripayResponses[X tripayDataResponse] struct {
@@ -145,5 +145,56 @@ type (
 		Message    string                                 `json:"message"`
 		Data       []merchantTransactionsDataResponse     `json:"data"`
 		Pagination merchantTransactionsPaginationResponse `json:"pagination"`
+	}
+
+	openPaymentDetailResponse struct {
+		UUID          string `json:"uuid"`
+		MerchantRef   string `json:"merchant_ref"`
+		CustomerName  string `json:"customer_name"`
+		PaymentName   string `json:"payment_name"`
+		PaymentMethod string `json:"payment_method"`
+		PayCode       string `json:"pay_code"`
+		QRString      string `json:"qr_string,omitempty"`
+		QRURL         string `json:"qr_url,omitempty"`
+	}
+
+	openPaymentDataResponse struct {
+		UUID          string `json:"uuid"`
+		MerchantRef   string `json:"merchant_ref"`
+		CustomerName  string `json:"customer_name"`
+		PaymentName   string `json:"payment_name"`
+		PaymentMethod string `json:"payment_method"`
+		PayCode       string `json:"pay_code"`
+		QRString      string `json:"qr_string"`
+		QRURL         string `json:"qr_url"`
+	}
+
+	openPaymentListResponse struct {
+		Success                bool   `json:"success"`
+		Message                string `json:"message"`
+		OpenPaymentTransaction []struct {
+			Reference      string `json:"reference"`
+			MerchantRef    string `json:"merchant_ref"`
+			PaymentMethod  string `json:"payment_method"`
+			PaymentName    string `json:"payment_name"`
+			CustomerName   string `json:"customer_name"`
+			Amount         int    `json:"amount"`
+			FeeMerchant    int    `json:"fee_merchant"`
+			FeeCustomer    int    `json:"fee_customer"`
+			TotalFee       int    `json:"total_fee"`
+			AmountReceived int    `json:"amount_received"`
+			CheckoutURL    string `json:"checkout_url"`
+			Status         string `json:"status"`
+			PaidAt         int64  `json:"paid_at"`
+		} `json:"data"`
+		Pagination struct {
+			Total       int  `json:"total"`
+			DataFrom    int  `json:"data_from"`
+			DataTo      int  `json:"data_to"`
+			PerPage     int  `json:"per_page"`
+			CurrentPage int  `json:"current_page"`
+			LastPage    int  `json:"last_page"`
+			NextPage    *int `json:"next_page"`
+		} `json:"pagination"`
 	}
 )

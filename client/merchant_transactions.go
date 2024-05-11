@@ -7,6 +7,7 @@ import (
 	"net/url"
 
 	"github.com/zakirkun/go-tripay/internal/requester"
+	"github.com/zakirkun/go-tripay/utils"
 )
 
 type (
@@ -16,7 +17,7 @@ type (
 		Sort        string
 		Reference   string
 		MerchantRef string
-		Method      string
+		Method      utils.TRIPAY_CHANNEL
 		Status      string
 	}
 )
@@ -62,7 +63,7 @@ func merchantTransactions(c Client, ctx context.Context, p ...MerchantTransactio
 	urlParam.Set("sort", merchatsParams.Sort)
 	urlParam.Set("reference", merchatsParams.Reference)
 	urlParam.Set("merchant_ref", merchatsParams.MerchantRef)
-	urlParam.Set("method", merchatsParams.Method)
+	urlParam.Set("method", string(merchatsParams.Method))
 	urlParam.Set("status", merchatsParams.Status)
 
 	paramReq := requester.IRequesterParams{
