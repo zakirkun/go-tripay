@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/zakirkun/go-tripay/utils"
@@ -47,5 +48,7 @@ func TestFeeCalcWithContextFail(t *testing.T) {
 	if response.Success != false {
 		t.FailNow()
 	}
+
+	fmt.Printf("response: %v\n", response)
 
 }

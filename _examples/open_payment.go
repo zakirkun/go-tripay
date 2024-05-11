@@ -1,22 +1,22 @@
 package examples
 
 import (
+	"fmt"
+
 	"github.com/zakirkun/go-tripay/client"
 	"github.com/zakirkun/go-tripay/utils"
-
-	"fmt"
 )
 
 func Example_open_payment_create() {
 
-	client := client.Client{
+	c := client.Client{
 		MerchantCode: "T14302",
-		ApiKey:       "DEV-ZKIDl5gE3AsCDThj7mWX6yvQ8f42NZWJWlZ7TSzS",
-		PrivateKey:   "J2WTm-93avv-w0PZV-ur1t4-4TCjd",
+		ApiKey:       "your_api_key_here",
+		PrivateKey:   "your_private_key_here",
 		Mode:         utils.MODE_DEVELOPMENT,
 	}
 
-	client.SetSignature(utils.Signature{
+	c.SetSignature(utils.Signature{
 		MerchantCode: "T14302",
 		Channel:      "BCAVA",
 		MerchanReff:  "INV345675",
@@ -26,10 +26,10 @@ func Example_open_payment_create() {
 		Method:       "BCAVA",
 		MerchatReff:  "INV345675",
 		CustomerName: "Fulan Fulan",
-		Signature:    client.GetSignature(),
+		Signature:    c.GetSignature(),
 	}
 
-	responseOk, responseBad := client.OpenPaymentTransaction(payment)
+	responseOk, responseBad := c.OpenPaymentTransaction(payment)
 	if responseBad != nil {
 		fmt.Errorf("ERROR: %v", responseBad)
 	}

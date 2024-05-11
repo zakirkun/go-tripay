@@ -19,12 +19,12 @@ func TestMerchantTransactionsWithContextSuccess(t *testing.T) {
 	ctx, timeout := context.WithTimeout(context.Background(), 5*time.Second)
 	defer timeout()
 
-	reponseOk, err := client.MerchantTransactionsWithContext(ctx)
+	response, err := client.MerchantTransactionsWithContext(ctx)
 	if err != nil {
 		t.FailNow()
 	}
 
-	t.Log(reponseOk)
+	t.Log(response)
 }
 
 func TestMerchantTransactionsWithContextFailed(t *testing.T) {
@@ -38,9 +38,9 @@ func TestMerchantTransactionsWithContextFailed(t *testing.T) {
 	ctx, timeout := context.WithTimeout(context.Background(), 5*time.Second)
 	defer timeout()
 
-	reponseOk, err := client.MerchantTransactionsWithContext(ctx)
-	if err != nil || reponseOk.Success {
-		t.Log(reponseOk)
+	response, err := client.MerchantTransactionsWithContext(ctx)
+	if err != nil || response.Success {
 		t.FailNow()
 	}
+	t.Log(response)
 }

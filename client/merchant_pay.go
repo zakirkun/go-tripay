@@ -7,42 +7,35 @@ import (
 	"github.com/zakirkun/go-tripay/internal/requester"
 )
 
-type MerchantResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Data    []struct {
-		Group       string `json:"group"`
-		Code        string `json:"code"`
-		Name        string `json:"name"`
-		Type        string `json:"type"`
-		FeeMerchant struct {
-			Flat    uint `json:"flat"`
-			Percent uint `json:"percent"`
-		} `json:"fee_merchant"`
-		FeeCustomer struct {
-			Flat    uint `json:"flat"`
-			Percent uint `json:"percent"`
-		} `json:"fee_customer"`
-		TotalFee struct {
-			Flat    uint    `json:"flat"`
-			Percent float64 `json:"percent"`
-		} `json:"total_fee"`
-		MinimumFee uint   `json:"minimum_fee"`
-		MaximumFee uint   `json:"maximum_fee"`
-		IconURL    string `json:"icon_url"`
-		Active     bool   `json:"active"`
-	} `json:"data"`
-}
+/*
+used to get a list of payment channels that are active on your Merchant account along with complete information including transaction fees from each channel. Example:
 
-func (c Client) MerchantPay() (*MerchantResponse, error) {
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	response, err := c.MerchantPay()
+	if err != nil{
+		// do something
+	}
+	// do something
+*/
+func (c Client) MerchantPay() (tripayResponses[[]merchantResponse], error) {
 	return merchantPay(c, nil)
 }
 
-func (c Client) MerchantPayWithContext(ctx context.Context) (*MerchantResponse, error) {
+/*
+used to get a list of payment channels that are active on your Merchant account along with complete information including transaction fees from each channel. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	response, err := c.MerchantPayWithContext(context.Background())
+	if err != nil{
+		// do something
+	}
+	// do something
+*/
+func (c Client) MerchantPayWithContext(ctx context.Context) (tripayResponses[[]merchantResponse], error) {
 	return merchantPay(c, ctx)
 }
 
-func merchantPay(c Client, ctx context.Context) (*MerchantResponse, error) {
+func merchantPay(c Client, ctx context.Context) (tripayResponses[[]merchantResponse], error) {
 	paramReq := requester.IRequesterParams{
 		Url:    c.BaseUrl() + "merchant/payment-channel",
 		Method: "GET",
@@ -60,10 +53,10 @@ func merchantPay(c Client, ctx context.Context) (*MerchantResponse, error) {
 	}
 
 	if errReq != nil {
-		return nil, errReq
+		return tripayResponses[[]merchantResponse]{}, errReq
 	}
 
-	var successResponse MerchantResponse
+	var successResponse tripayResponses[[]merchantResponse]
 	json.Unmarshal(bodyReq.ResponseBody, &successResponse)
-	return &successResponse, nil
+	return successResponse, nil
 }

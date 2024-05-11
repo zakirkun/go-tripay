@@ -16,12 +16,12 @@ func TestMerchantPay(t *testing.T) {
 		Mode:         utils.MODE_DEVELOPMENT,
 	}
 
-	reponseOk, responseBad := client.MerchantPay()
-	if responseBad != nil {
-		t.Errorf("ERROR: %v", responseBad)
+	response, err := client.MerchantPay()
+	if err != nil {
+		t.Errorf("ERROR: %v", err)
 	}
 
-	t.Log("Success: ", reponseOk)
+	t.Log("Success: ", response)
 }
 
 func TestMerchantPayWithCtx(t *testing.T) {
@@ -35,10 +35,10 @@ func TestMerchantPayWithCtx(t *testing.T) {
 	ctx, timeout := context.WithTimeout(context.Background(), 5*time.Second)
 	defer timeout()
 
-	reponseOk, responseBad := client.MerchantPayWithContext(ctx)
-	if responseBad != nil {
-		t.Errorf("ERROR: %v", responseBad)
+	response, err := client.MerchantPayWithContext(ctx)
+	if err != nil {
+		t.Errorf("ERROR: %v", err)
 	}
 
-	t.Log("Success: ", reponseOk)
+	t.Log("Success: ", response)
 }

@@ -85,26 +85,44 @@ type OpenPaymentListResponse struct {
 	} `json:"pagination"`
 }
 
+/*
+is used to retrieve the list of payments entered in the open payment. this method only work in production!
+*/
 func (c Client) OpenPaymentDetail(uuid string) (*OpenPaymentDetailResponse, error) {
 	return openPaymentDetail(c, uuid, nil)
 }
 
+/*
+is used to retrieve the list of payments entered in the open payment. this method only work in production!
+*/
 func (c Client) OpenPaymentDetailWithContext(uuid string, ctx context.Context) (*OpenPaymentDetailResponse, error) {
 	return openPaymentDetail(c, uuid, ctx)
 }
 
+/*
+Used to create a new transaction or generate a payment code for Open Payment type. this method only work in production!
+*/
 func (c Client) OpenPaymentTransaction(p OpenPaymentRequest) (*OpenPaymentResponse, error) {
 	return openPayment(c, p, nil)
 }
 
+/*
+Used to create a new transaction or generate a payment code for Open Payment type. this method only work in production!
+*/
 func (c Client) OpenPaymentTransactionWithContext(p OpenPaymentRequest, ctx context.Context) (*OpenPaymentResponse, error) {
 	return openPayment(c, p, ctx)
 }
 
+/*
+used to retrieve details of open payment transactions that have been made. this method only work in production!
+*/
 func (c Client) OpenPaymentList(uuid string, p ...OpenPaymentListParams) (*OpenPaymentListResponse, error) {
 	return openPaymentList(c, uuid, nil, p...)
 }
 
+/*
+used to retrieve details of open payment transactions that have been made. this method only work in production!
+*/
 func (c Client) OpenPaymentListWithContext(uuid string, ctx context.Context, p ...OpenPaymentListParams) (*OpenPaymentListResponse, error) {
 	return openPaymentList(c, uuid, ctx, p...)
 }
