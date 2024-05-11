@@ -10,41 +10,20 @@ import (
 	"github.com/zakirkun/go-tripay/utils"
 )
 
-type (
-	FeeCalcResponse struct {
-		Success bool   `json:"success"`
-		Message string `json:"message"`
-		Data    []struct {
-			Code string
-			Name string
-			Fee  struct {
-				Flat    int         `json:"flat"`
-				Percent string      `json:"percent"`
-				Min     interface{} `json:"min"`
-				Max     interface{} `json:"max"`
-			} `json:"fee"`
-			TotalFee struct {
-				Merchant int `json:"merchant"`
-				Customer int `json:"customer"`
-			} `json:"total_fee"`
-		} `json:"data"`
-	}
+type FeeCalcParam struct {
+	Amount int
+	Code   utils.TRIPAY_CHANNEL
+}
 
-	FeeCalcParam struct {
-		Amount int
-		Code   utils.TRIPAY_CHANNEL
-	}
-)
-
-func (c Client) FeeCalc(p FeeCalcParam) (*FeeCalcResponse, error) {
+func (c Client) FeeCalc(p FeeCalcParam) (tripayResponses[[]feeCalcResponse], error) {
 	return feeCalc(c, p, nil)
 }
 
-func (c Client) FeeCalcWithContext(ctx context.Context, p FeeCalcParam) (*FeeCalcResponse, error) {
+func (c Client) FeeCalcWithContext(ctx context.Context, p FeeCalcParam) (tripayResponses[[]feeCalcResponse], error) {
 	return feeCalc(c, p, ctx)
 }
 
-func feeCalc(c Client, p FeeCalcParam, ctx context.Context) (*FeeCalcResponse, error) {
+func feeCalc(c Client, p FeeCalcParam, ctx context.Context) (tripayResponses[[]feeCalcResponse], error) {
 	param := url.Values{}
 	param.Set("code", string(p.Code))
 	param.Set("amount", fmt.Sprintf("%d", p.Amount))
@@ -67,10 +46,10 @@ func feeCalc(c Client, p FeeCalcParam, ctx context.Context) (*FeeCalcResponse, e
 	}
 
 	if errReq != nil {
-		return nil, errReq
+		return tripayResponses[[]feeCalcResponse]{}, errReq
 	}
 
-	var successResponse FeeCalcResponse
+	var successResponse tripayResponses[[]feeCalcResponse]
 	json.Unmarshal(bodyReq.ResponseBody, &successResponse)
-	return &successResponse, nil
+	return successResponse, nil
 }

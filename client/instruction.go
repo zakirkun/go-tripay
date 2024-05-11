@@ -8,21 +8,7 @@ import (
 	"github.com/zakirkun/go-tripay/internal/requester"
 )
 
-type InstructionResponseOk struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Data    []struct {
-		Title string   `json:"title"`
-		Steps []string `json:"steps"`
-	} `json:"data"`
-}
-
-type InstructionResponseBad struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-}
-
-func (c Client) Instruction(channelCode string, payCode string, amount string, allow_html string) (*InstructionResponseOk, *InstructionResponseBad) {
+func (c Client) Instruction(channelCode string, payCode string, amount string, allow_html string) (tripayResponses[[]instructionResponse], error) {
 
 	params := url.Values{}
 	params.Set("code", channelCode)
@@ -51,14 +37,11 @@ func (c Client) Instruction(channelCode string, payCode string, amount string, a
 	body, err := requester.DO()
 
 	if err != nil {
-		var responseBad InstructionResponseBad
-		_ = json.Unmarshal(body.ResponseBody, &responseBad)
-
-		return nil, &responseBad
+		return tripayResponses[[]instructionResponse]{}, err
 	}
 
-	var responseOk InstructionResponseOk
-	_ = json.Unmarshal(body.ResponseBody, &responseOk)
+	var response tripayResponses[[]instructionResponse]
+	_ = json.Unmarshal(body.ResponseBody, &response)
 
-	return &responseOk, nil
+	return response, nil
 }

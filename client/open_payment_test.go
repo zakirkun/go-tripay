@@ -27,10 +27,10 @@ func TestOpenPaymentSuccess(t *testing.T) {
 		Signature:    client.GetSignature(),
 	}
 
-	responseOk, responseBad := client.OpenPaymentTransaction(payment)
-	if responseBad != nil {
-		t.Errorf("ERROR: %v", responseBad)
+	response, err := client.OpenPaymentTransaction(payment)
+	if err != nil {
+		t.Errorf("ERROR: %v", err)
 	}
 
-	t.Log("Success: ", responseOk)
+	t.Log("Success: ", response)
 }

@@ -11,54 +11,7 @@ import (
 )
 
 type (
-	TripayExpiredTime                      int
-	ClosePaymentRequestTransactionResponse struct {
-		Success bool                         `json:"success"`
-		Message string                       `json:"message"`
-		Data    ClosePaymentTransactionOrder `json:"data"`
-	}
-
-	ClosePaymentTransactionOrder struct {
-		Reference            string                             `json:"reference"`
-		MerchantRef          string                             `json:"merchant_ref"`
-		PaymentSelectionType string                             `json:"payment_selection_type"`
-		PaymentMethod        string                             `json:"payment_method"`
-		PaymentName          string                             `json:"payment_name"`
-		CustomerName         string                             `json:"customer_name"`
-		CustomerEmail        string                             `json:"customer_email"`
-		CustomerPhone        string                             `json:"customer_phone"`
-		CallbackURL          string                             `json:"callback_url"`
-		ReturnURL            string                             `json:"return_url"`
-		Amount               int                                `json:"amount"`
-		FeeMerchant          int                                `json:"fee_merchant"`
-		FeeCustomer          int                                `json:"fee_customer"`
-		TotalFee             int                                `json:"total_fee"`
-		AmountReceived       int                                `json:"amount_received"`
-		PayCode              string                             `json:"pay_code"`
-		PayURL               interface{}                        `json:"pay_url"`
-		CheckoutURL          string                             `json:"checkout_url"`
-		Status               string                             `json:"status"`
-		ExpiredTime          int                                `json:"expired_time"`
-		OrderItems           []ClosePaymentTransactionOrderItem `json:"order_items"`
-		Instructions         []Instruction                      `json:"instructions"`
-		QRString             interface{}                        `json:"qr_string"`
-		QRURL                interface{}                        `json:"qr_url"`
-	}
-
-	ClosePaymentTransactionOrderItem struct {
-		SKU        string `json:"sku"`
-		Name       string `json:"name"`
-		Price      int    `json:"price"`
-		Quantity   int    `json:"quantity"`
-		Subtotal   int    `json:"subtotal"`
-		ProductURL string `json:"product_url"`
-		ImageURL   string `json:"image_url"`
-	}
-
-	Instruction struct {
-		Title string   `json:"title"`
-		Steps []string `json:"steps"`
-	}
+	TripayExpiredTime       int
 	ClosePaymentBodyRequest struct {
 		Method        utils.TRIPAY_CHANNEL           `json:"method"`
 		MerchantRef   string                         `json:"merchant_ref"`
@@ -90,15 +43,15 @@ func SetTripayExpiredTime(hour int) TripayExpiredTime {
 	return TripayExpiredTime(int(time.Now().Unix()) + (hour * 60 * 60))
 }
 
-func (c Client) ClosePaymentRequestTransaction(ctx context.Context, req ClosePaymentBodyRequest) (*ClosePaymentRequestTransactionResponse, error) {
+func (c Client) ClosePaymentRequestTransaction(req ClosePaymentBodyRequest) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	return closePaymentRequestTransaction(c, nil, req)
 }
 
-func (c Client) ClosePaymentRequestTransactionWithContext(ctx context.Context, req ClosePaymentBodyRequest) (*ClosePaymentRequestTransactionResponse, error) {
+func (c Client) ClosePaymentRequestTransactionWithContext(ctx context.Context, req ClosePaymentBodyRequest) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	return closePaymentRequestTransaction(c, ctx, req)
 }
 
-func closePaymentRequestTransaction(c Client, ctx context.Context, reqBody ClosePaymentBodyRequest) (*ClosePaymentRequestTransactionResponse, error) {
+func closePaymentRequestTransaction(c Client, ctx context.Context, reqBody ClosePaymentBodyRequest) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	reqBodyByte, _ := json.Marshal(&reqBody)
 	paramReq := requester.IRequesterParams{
 		Url:    c.BaseUrl() + "transaction/create",
@@ -116,23 +69,23 @@ func closePaymentRequestTransaction(c Client, ctx context.Context, reqBody Close
 	}
 
 	if errReq != nil {
-		return nil, errReq
+		return tripayResponses[closePaymentTransactionOrderResponse]{}, errReq
 	}
 
-	var successResponse ClosePaymentRequestTransactionResponse
+	var successResponse tripayResponses[closePaymentTransactionOrderResponse]
 	json.Unmarshal(bodyReq.ResponseBody, &successResponse)
-	return &successResponse, nil
+	return successResponse, nil
 }
 
-func (c Client) ClosePaymentTransactionGetDetail(reference string) (*ClosePaymentRequestTransactionResponse, error) {
+func (c Client) ClosePaymentTransactionGetDetail(reference string) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	return closePaymentTransactionGetDetail(c, nil, reference)
 }
 
-func (c Client) ClosePaymentTransactionGetDetailWithContext(ctx context.Context, reference string) (*ClosePaymentRequestTransactionResponse, error) {
+func (c Client) ClosePaymentTransactionGetDetailWithContext(ctx context.Context, reference string) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	return closePaymentTransactionGetDetail(c, ctx, reference)
 }
 
-func closePaymentTransactionGetDetail(c Client, ctx context.Context, reference string) (*ClosePaymentRequestTransactionResponse, error) {
+func closePaymentTransactionGetDetail(c Client, ctx context.Context, reference string) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	paramReq := requester.IRequesterParams{
 		Url:    c.BaseUrl() + "transaction/detail?" + fmt.Sprintf("reference=%s", reference),
 		Method: "GET",
@@ -149,10 +102,10 @@ func closePaymentTransactionGetDetail(c Client, ctx context.Context, reference s
 	}
 
 	if errReq != nil {
-		return nil, errReq
+		return tripayResponses[closePaymentTransactionOrderResponse]{}, errReq
 	}
 
-	var successResponse ClosePaymentRequestTransactionResponse
+	var successResponse tripayResponses[closePaymentTransactionOrderResponse]
 	json.Unmarshal(bodyReq.ResponseBody, &successResponse)
-	return &successResponse, nil
+	return successResponse, nil
 }

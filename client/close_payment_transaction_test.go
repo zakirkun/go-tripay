@@ -1,7 +1,6 @@
 package client
 
 import (
-	"context"
 	"testing"
 
 	"github.com/zakirkun/go-tripay/utils"
@@ -43,7 +42,7 @@ func TestClosePaymentTransactionRequest(t *testing.T) {
 			},
 		},
 	}
-	response, err := client.ClosePaymentRequestTransaction(context.Background(), bodyReq)
+	response, err := client.ClosePaymentRequestTransaction(bodyReq)
 	if err != nil {
 		t.Errorf("ERROR: %v", err)
 	}
