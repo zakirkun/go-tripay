@@ -21,10 +21,30 @@ type (
 	}
 )
 
+/*
+used to get a list of merchant transactions. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	response, err := c.MerchantTransactions()
+	if err != nil{
+		// do something
+	}
+	// do something
+*/
 func (c Client) MerchantTransactions(p ...MerchantTransactionsParam) (*merchantTransactionsResponse, error) {
 	return merchantTransactions(c, nil, p...)
 }
 
+/*
+used to get a list of merchant transactions. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	response, err := c.MerchantTransactionsWithContext(context.Background())
+	if err != nil{
+		// do something
+	}
+	// do something
+*/
 func (c Client) MerchantTransactionsWithContext(ctx context.Context, p ...MerchantTransactionsParam) (*merchantTransactionsResponse, error) {
 	return merchantTransactions(c, ctx, p...)
 }

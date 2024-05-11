@@ -6,23 +6,42 @@ import (
 	"net/url"
 
 	"github.com/zakirkun/go-tripay/internal/requester"
+	"github.com/zakirkun/go-tripay/utils"
 )
 
-func (c Client) Instruction(channelCode string, payCode string, amount string, allow_html string) (tripayResponses[[]instructionResponse], error) {
+type InstructionRequestParam struct {
+	ChannelCode utils.TRIPAY_CHANNEL
+	PayCode     string
+	Amount      string
+	AllowHtml   string
+}
+
+/*
+used to retrieve payment instructions from each channel. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	param := InstructionRequestParam{ ChannelCode: utils.CHANNEL_BRIVA, PayCode: "", Amount: "10000", AllowHtml: "" }
+	response, err := c.Instruction(param)
+	if err != nil{
+		// do something
+	}
+	// do something
+*/
+func (c Client) Instruction(ip InstructionRequestParam) (tripayResponses[[]instructionResponse], error) {
 
 	params := url.Values{}
-	params.Set("code", channelCode)
+	params.Set("code", string(ip.ChannelCode))
 
-	if payCode != "" {
-		params.Set("pay_code", payCode)
+	if ip.PayCode != "" {
+		params.Set("pay_code", ip.PayCode)
 	}
 
-	if amount != "" {
-		params.Set("amount", amount)
+	if ip.Amount != "" {
+		params.Set("amount", ip.Amount)
 	}
 
-	if allow_html != "" {
-		params.Set("allow_html", allow_html)
+	if ip.AllowHtml != "" {
+		params.Set("ip.AllowHtml", ip.AllowHtml)
 	}
 
 	queryString := params.Encode()

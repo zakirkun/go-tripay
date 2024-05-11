@@ -39,14 +39,88 @@ type (
 	}
 )
 
+/*
+used to make a payment limit within hours. Example:
+
+	hour := 24 // one day
+	SetTripayExpiredTime(hour)
+*/
 func SetTripayExpiredTime(hour int) TripayExpiredTime {
 	return TripayExpiredTime(int(time.Now().Unix()) + (hour * 60 * 60))
 }
 
+/*
+used to create a new transaction or generate a payment code. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	c.SetSignature(utils.Signature{Amount: 50000, PrivateKey: "your_private_key", MerchantCode: "T14302",MerchanReff: "INV345675"})
+
+	req := ClosePaymentBodyRequest{
+		Method:        utils.CHANNEL_BCAVA,
+		MerchantRef:   "INV345675",
+		Amount:        50000,
+		CustomerName:  "John Doe",
+		CustomerEmail: "johndoe@gmail.com",
+		CustomerPhone: "62891829828",
+		ReturnURL:     "https://thisisreturnurl.com/redirect",
+		ExpiredTime:   SetTripayExpiredTime(24), // 24 Hour
+		Signature:     client.GetSignature(),
+		OrderItems: []OrderItemClosePaymentRequest{
+			{
+				SKU:        "Produk1",
+				Name:       "nama produk 1",
+				Price:      50000,
+				Quantity:   1,
+				ProductURL: "https://producturl.com",
+				ImageURL:   "https://imageurl.com",
+			},
+		},
+	}
+
+	response, err := c.ClosePaymentRequestTransaction(req)
+	if err != nil {
+		// do something
+	}
+	// do something
+*/
 func (c Client) ClosePaymentRequestTransaction(req ClosePaymentBodyRequest) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	return closePaymentRequestTransaction(c, nil, req)
 }
 
+/*
+used to create a new transaction or generate a payment code. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	c.SetSignature(utils.Signature{ Amount: 50000, PrivateKey: "your_private_key", MerchantCode: "T14302",MerchanReff: "INV345675" })
+
+	req := ClosePaymentBodyRequest{
+		Method:        utils.CHANNEL_BCAVA,
+		MerchantRef:   "INV345675",
+		Amount:        50000,
+		CustomerName:  "John Doe",
+		CustomerEmail: "johndoe@gmail.com",
+		CustomerPhone: "62891829828",
+		ReturnURL:     "https://thisisreturnurl.com/redirect",
+		ExpiredTime:   SetTripayExpiredTime(24), // 24 Hour
+		Signature:     client.GetSignature(),
+		OrderItems: []OrderItemClosePaymentRequest{
+			{
+				SKU:        "Produk1",
+				Name:       "nama produk 1",
+				Price:      50000,
+				Quantity:   1,
+				ProductURL: "https://producturl.com",
+				ImageURL:   "https://imageurl.com",
+			},
+		},
+	}
+
+	response, err := c.ClosePaymentRequestTransactionWithContext(context.Background,req)
+	if err != nil {
+		// do something
+	}
+	// do something
+*/
 func (c Client) ClosePaymentRequestTransactionWithContext(ctx context.Context, req ClosePaymentBodyRequest) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	return closePaymentRequestTransaction(c, ctx, req)
 }
@@ -77,10 +151,32 @@ func closePaymentRequestTransaction(c Client, ctx context.Context, reqBody Close
 	return successResponse, nil
 }
 
+/*
+Used to retrieve details of transactions that have been made. Can also be used to check payment status. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	referenceId := "reference_id"
+	response, err := c.ClosePaymentTransactionGetDetail(referenceId)
+	if err != nil {
+		// do something
+	}
+	// do something
+*/
 func (c Client) ClosePaymentTransactionGetDetail(reference string) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	return closePaymentTransactionGetDetail(c, nil, reference)
 }
 
+/*
+Used to retrieve details of transactions that have been made. Can also be used to check payment status. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	referenceId := "reference_id"
+	response, err := c.ClosePaymentTransactionGetDetailWithContext(referenceId)
+	if err != nil {
+		// do something
+	}
+	// do something
+*/
 func (c Client) ClosePaymentTransactionGetDetailWithContext(ctx context.Context, reference string) (tripayResponses[closePaymentTransactionOrderResponse], error) {
 	return closePaymentTransactionGetDetail(c, ctx, reference)
 }

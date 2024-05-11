@@ -15,10 +15,32 @@ type FeeCalcParam struct {
 	Code   utils.TRIPAY_CHANNEL
 }
 
+/*
+used to get the details of the transaction fee calculation for each channel based on the nominal specified. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	fcParam := FeeCalcParam{Code: utils.CHANNEL_ALFAMIDI,Amount: 100000}
+	response, err := client.FeeCalc(fcParam)
+	if err != nil {
+		// do something
+	}
+	// do something
+*/
 func (c Client) FeeCalc(p FeeCalcParam) (tripayResponses[[]feeCalcResponse], error) {
 	return feeCalc(c, p, nil)
 }
 
+/*
+used to get the details of the transaction fee calculation for each channel based on the nominal specified. Example:
+
+	c := Client{ MerchantCode: "T14302", ApiKey: "your_api_key", PrivateKey: "your_private_key", Mode: utils.MODE_DEVELOPMENT }
+	fcParam := FeeCalcParam{Code: utils.CHANNEL_ALFAMIDI,Amount: 100000}
+	response, err := client.FeeCalcWithContext(context.Background(), fcParam)
+	if err != nil {
+		// do something
+	}
+	// do something
+*/
 func (c Client) FeeCalcWithContext(ctx context.Context, p FeeCalcParam) (tripayResponses[[]feeCalcResponse], error) {
 	return feeCalc(c, p, ctx)
 }

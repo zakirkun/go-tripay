@@ -15,7 +15,13 @@ func TestInstruction(t *testing.T) {
 		Mode:         utils.MODE_DEVELOPMENT,
 	}
 
-	response, err := client.Instruction("BRIVA", "", "10000", "")
+	ip := InstructionRequestParam{
+		ChannelCode: utils.CHANNEL_BRIVA,
+		PayCode:     "",
+		Amount:      "10000",
+		AllowHtml:   "",
+	}
+	response, err := client.Instruction(ip)
 	if err != nil {
 		t.Errorf("ERROR: %v", err)
 	}
